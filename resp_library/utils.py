@@ -54,7 +54,7 @@ def smiles_to_iupac(smiles):
             f"https://cactus.nci.nih.gov/chemical/structure"
         )
     iupac_name = response.text
-    return iupac_name.replace(" ", "_")
+    return iupac_name.lower().replace(" ", "_")
 
 
 def yaml_template(smiles, iupac_name, resp_type):
@@ -93,3 +93,10 @@ def build_p4mol(elements, coords, net_charge):
     mol.update_geometry()
 
     return mol
+
+
+def _try_mkdir(dir_path):
+    try:
+        dir_path.mkdir()
+    except FileExistsError:
+        pass

@@ -18,6 +18,7 @@ from .utils import canonicalize_smiles
 from .utils import smiles_to_iupac
 from .utils import yaml_template
 from .utils import build_p4mol
+from .utils import _try_mkdir
 from .utils import BOHR_TO_ANGSTROM, HARTREE_TO_KJMOL
 from .logger import Logger
 
@@ -26,13 +27,28 @@ from .exceptions import RESPLibraryError
 LIB_PATH = Path.joinpath(Path(__file__).parent, "lib/")
 
 
-def retrieve_charges(smiles):
+def retrieve_charges(smiles, resp_type, delta=0.6, filen=None):
     """Retrieve the charges for the molecule with the provided smiles string
+
+    Returns an rdkit molecule with the charges stored as
+    property "q_resp".
+
+    If a string is specified for filen, it also writes two files:
+    * {filen}.pdb, which contains coordinates and bonding
+    * {filen}.charges, which contains elements and charges (in the same order)
 
     Parameters
     ----------
     smiles: str
         the smiles string of the desired molecule
+    resp_type: str
+        the type of RESP to perform (RESP1 or RESP2)
+    delta: float
+        q_RESP2 = q_vacuum*(1-delta) + q_pcm*delta
+        default = 0.6
+        only applicable for RESP2
+    filen: file to save the charges to
+        optional, default = None
 
     Returns
     -------
@@ -44,6 +60,78 @@ def retrieve_charges(smiles):
     ChargesNotFoundError
         if no charges are found
     """
+    smiles = canonicalize_smiles(smiles)
+    iupac_name = smiles_to_iupac(smiles)
+    mol_path = Path.joinpath(LIB_PATH, iupac_name)
+    if not mol_path.is_dir():
+        raise RESPLibraryError(
+            f"The molecule: {iupac_name} with smiles string: {smiles} "
+            f"does not exist in the library."
+        )
+    resp_type = resp_type.upper()
+    if resp_type != "RESP1" and resp_type != "RESP2":
+        raise RESPLibraryError(
+            "Invalid resp type. Options include 'RESP1' and 'RESP2'."
+        )
+    resp_path = Path.joinpath(mol_path, resp_type)
+    if resp_type == "RESP1":
+        charges_path = Path.joinpath(resp_path, "results/charges_vacuum_full.out")
+        if not charges_path.is_file():
+            raise RESPLibraryError(
+                f"The RESP1 charges do not exist for molecule: {iupac_name} "
+                f"with smiles string: {smiles}."
+            )
+        charges = []
+        with charges_path.open() as f:
+            for line in f:
+                charges.append(float(line.split()[1]))
+        charges = np.array(charges)
+
+    if resp_type == "RESP2":
+        vacuum_path = Path.joinpath(resp_path, "results/charges_vacuum_full.out")
+        pcm_path = Path.joinpath(resp_path, "results/charges_pcm_full.out")
+        if not vacuum_path.is_file() or not pcm_path.is_file():
+            raise RESPLibraryError(
+                f"The RESP2 charges do not exist for molecule: {iupac_name} "
+                f"with smiles string: {smiles}."
+            )
+        vacuum_charges = []
+        with vacuum_path.open() as f:
+            for line in f:
+                vacuum_charges.append(float(line.split()[1]))
+        pcm_charges = []
+        with pcm_path.open() as f:
+            for line in f:
+                pcm_charges.append(float(line.split()[1]))
+        vacuum_charges = np.array(vacuum_charges)
+        pcm_charges = np.array(pcm_charges)
+        charges = pcm_charges * delta + (1.0-delta) * vacuum_charges
+
+    rdmol = Chem.MolFromSmiles(smiles)
+    rdmol = Chem.AddHs(rdmol)
+    for atom, charge in zip(rdmol.GetAtoms(), charges):
+        atom.SetDoubleProp("q", charge)
+    cid = AllChem.EmbedMolecule(rdmol, randomSeed=1)
+
+    if filen is not None:
+        shutil.copy(Path.joinpath(mol_path, "template.pdb"), filen + ".pdb")
+        with open(filen + ".charges", "w") as f:
+            for atom, charge in zip(rdmol.GetAtoms(), charges):
+                f.write(f"{atom.GetSymbol():5s}{charge}\n")
+
+    return rdmol
+
+"""
+    mol_string = f"{rdmol.GetNumAtoms()}\n\n"
+    coords = rdmol.GetConformer().GetPositions()
+    for atom, coord in zip(rdmol.GetAtoms(), coords):
+        mol_string += f"{atom.GetSymbol():5s}"
+        mol_string += f"{coord[0]:10.4f}{coord[1]:10.4f}{coord[2]:10.4f}"
+        mol_string += f"   # {float(atom.GetProp('q')):7.5f}"
+        mol_string += "\n"
+
+    return mol_string
+"""
 
 
 def prepare_charge_calculation(smiles):
@@ -90,7 +178,7 @@ def prepare_charge_calculation(smiles):
             f.write(yaml_template(smiles, iupac_name, resp_type))
 
 
-def calculate_charges(smiles, resp_type):
+def calculate_charges(smiles, resp_type, overwrite=False):
     """Run the charge calculation for the molecule defined by smiles
 
     Parameters
@@ -99,7 +187,8 @@ def calculate_charges(smiles, resp_type):
         the smiles string of the desired molecule
     resp_type: str
         the type of RESP to perform (RESP1 or RESP2)
-
+    overwrite: boolean, optional, default=False
+        overwrite the previous results if they exist
     Returns
     -------
 
@@ -121,6 +210,14 @@ def calculate_charges(smiles, resp_type):
     # Initialize RESP stuff
     resp_type = resp_type.upper()
     resp_path = Path.joinpath(mol_path, resp_type)
+    if not overwrite:
+        if Path.joinpath(resp_path, "results").is_dir():
+            raise RESPLibraryError(
+                "It appears that this partial charge calculation "
+                "has already been attempted or performed. If you wish "
+                "to re-run this calculation, please remove the 'results', "
+                "'structures', and 'esp_grids' directories before proceeding."
+            )
     inp, log = _initialize_resp(resp_path)
 
     # Molecule definition
@@ -259,15 +356,30 @@ def _geometry_optimize(molecule, resp_type):
 
     # HF/6-31g*
     if resp_type == "RESP1":
-        psi4.set_options({"basis": "6-31g*", "geom_maxiter": 500})
+        psi4.set_options({
+            "basis": "6-31g*",
+            "geom_maxiter": 500,
+            "maxiter": 500,
+            "opt_coordinates": "cartesian",
+        })
         psi4.optimize("hf", molecule=molecule)
         energy = psi4.energy("hf", molecule=molecule)
 
     # HF/6-31g*, HF/cc-pV(D+d)Z, PW6B95/cc-pV(D+d)Z
     elif resp_type == "RESP2":
-        psi4.set_options({"basis": "6-31g*", "geom_maxiter": 500})
+        psi4.set_options({
+            "basis": "6-31g*",
+            "geom_maxiter": 500,
+            "maxiter": 500,
+            "opt_coordinates": "cartesian",
+        })
         psi4.optimize("hf", molecule=molecule)
-        psi4.set_options({"basis": "cc-pV(D+d)Z", "geom_maxiter": 500})
+        psi4.set_options({
+            "basis": "cc-pV(D+d)Z",
+            "geom_maxiter": 500,
+            "maxiter": 500,
+            "opt_coordinates": "cartesian",
+        })
         psi4.optimize("hf", molecule=molecule)
         psi4.set_options({
             "basis": "cc-pV(D+d)Z",
@@ -276,6 +388,7 @@ def _geometry_optimize(molecule, resp_type):
             "dft_spherical_points": 590,
             "dft_radial_points": 99,
             "dft_pruning_scheme": "robust",
+            "opt_coordinates": "cartesian",
         }
         )
         psi4.optimize("pw6b95", molecule=molecule)
@@ -325,7 +438,7 @@ def _perform_resp(
         psi4.set_options(
             {
                 "pcm": True,
-                "pcm_input": pcm_string
+                "pcm__input": pcm_string
             }
         )
 
@@ -488,11 +601,16 @@ def _initialize_resp(resp_path):
     # TODO: Add YAML validation (https://docs.python-cerberus.org/en/stable/)
 
     # Make the directories
-    Path("structures").mkdir()
-    Path("esp_grids").mkdir()
-    Path("results").mkdir()
+    _try_mkdir(Path("structures"))
+    _try_mkdir(Path("esp_grids"))
+    _try_mkdir(Path("results"))
 
     return inp, log
+
+
+def _finalize_resp(log):
+    # Change to resp dir
+    log.close()
 
 
 def _write_results(

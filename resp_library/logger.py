@@ -1,5 +1,6 @@
-import datetime
 import textwrap
+
+from datetime import datetime
 
 
 class Logger:
