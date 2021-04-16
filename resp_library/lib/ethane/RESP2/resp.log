@@ -1,0 +1,283 @@
+RESP performed at: 2021-04-15 21:47:02.719847 UTC
+
+
+Loaded YAML file: resp.yaml
+----------------------------------------------------------------------------------------------------
+name:   ethane
+smiles: CC
+
+conformer_generation:
+  n_conformers: 5
+  rms_threshold: 0.5
+  energy_threshold: 10  # kJ/mol
+  random_seed: 1
+
+resp:
+  type: RESP2
+  point_density: 3.0
+  vdw_scale_factors:
+    - 1.6
+    - 1.8
+    - 2.0
+  charge_constraints:
+  equality_constraints:
+    - [1, 2]
+    - [3, 4, 5, 6, 7, 8]
+
+----------------------------------------------------------------------------------------------------
+
+The net charge is 0.
+Wrote all aligned to 'structures/aligned_conformers.xyz'.
+Wrote the final optimized gemoetries to 'optimized_geometries.pdb'.
+
+----------------------------------------------------------------------------------------------------
+VACUUM RESP
+Log from stage 1:
+----------------------------------------------------------------------------------------------------
+Electrostatic potential parameters
+    van der Waals radii (Angstrom):
+                                      C   1.700
+                                      H   1.200
+    VDW scale factors:                1.60  1.80  2.00
+    VDW point density:                3.000
+    ESP method:                       pw6b95
+    ESP basis set:                    aug-cc-pV(D+d)Z
+
+Grid information (see 1_default_grid.dat in Angstrom)
+    Number of grid points:            1265
+
+Quantum electrostatic potential (see 1_default_grid_esp.dat)
+
+Grid information (see 2_default_grid.dat in Angstrom)
+    Number of grid points:            1238
+
+Quantum electrostatic potential (see 2_default_grid_esp.dat)
+
+Grid information (see 3_default_grid.dat in Angstrom)
+    Number of grid points:            1285
+
+Quantum electrostatic potential (see 3_default_grid_esp.dat)
+
+Grid information (see 4_default_grid.dat in Angstrom)
+    Number of grid points:            1270
+
+Quantum electrostatic potential (see 4_default_grid_esp.dat)
+
+Grid information (see 5_default_grid.dat in Angstrom)
+    Number of grid points:            1256
+
+Quantum electrostatic potential (see 5_default_grid_esp.dat)
+
+Constraints
+
+Restraint
+    Hyperbolic restraint to a charge of zero
+    Hydrogen atoms are not restrained
+    resp_a:                           0.0005
+    resp_b:                           0.1000
+
+Fit
+
+Electrostatic Potential Charges
+   Center  Symbol       ESP      RESP
+      1    C      -0.01323835 -0.00931483
+      2    C      -0.01184843 -0.00873960
+      3    H       0.00432016  0.00306099
+      4    H       0.00427296  0.00301171
+      5    H       0.00439812  0.00313820
+      6    H       0.00403537  0.00295291
+      7    H       0.00404545  0.00296113
+      8    H       0.00401473  0.00292949
+Total Charge:      0.00000000 -0.00000000
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+VACUUM RESP
+Log from stage:
+----------------------------------------------------------------------------------------------------
+Electrostatic potential parameters
+
+Grid information (see 1_default_grid.dat in Angstrom)
+    Number of grid points:            1265
+
+Quantum electrostatic potential (see 1_default_grid_esp.dat)
+
+Grid information (see 2_default_grid.dat in Angstrom)
+    Number of grid points:            1238
+
+Quantum electrostatic potential (see 2_default_grid_esp.dat)
+
+Grid information (see 3_default_grid.dat in Angstrom)
+    Number of grid points:            1285
+
+Quantum electrostatic potential (see 3_default_grid_esp.dat)
+
+Grid information (see 4_default_grid.dat in Angstrom)
+    Number of grid points:            1270
+
+Quantum electrostatic potential (see 4_default_grid_esp.dat)
+
+Grid information (see 5_default_grid.dat in Angstrom)
+    Number of grid points:            1256
+
+Quantum electrostatic potential (see 5_default_grid_esp.dat)
+
+Constraints
+    Equality constraints
+        Equal charges on atoms
+                                  1   2
+                                  3   4   5   6   7   8
+
+Restraint
+    Hyperbolic restraint to a charge of zero
+    Hydrogen atoms are not restrained
+    resp_a:                           0.0010
+    resp_b:                           0.1000
+
+Fit
+
+Electrostatic Potential Charges
+   Center  Symbol       ESP      RESP
+      1    C      -0.01254309 -0.00704617
+      2    C      -0.01254309 -0.00704617
+      3    H       0.00418103  0.00234872
+      4    H       0.00418103  0.00234872
+      5    H       0.00418103  0.00234872
+      6    H       0.00418103  0.00234872
+      7    H       0.00418103  0.00234872
+      8    H       0.00418103  0.00234872
+Total Charge:      0.00000000 -0.00000000
+----------------------------------------------------------------------------------------------------
+
+
+
+Full precision charges have been saved to 'results/charges_vacuum_full.out'.
+Rounded charges (3 decimals) have been saved to 'results/charges_vacuum_rounded.out'.
+Rounded charges in 'results/charges_vacuum_rounded.out' violate the specified equality constraints
+and need to be corrected by hand.
+----------------------------------------------------------------------------------------------------
+PCM RESP
+Log from stage 1:
+----------------------------------------------------------------------------------------------------
+Electrostatic potential parameters
+    van der Waals radii (Angstrom):
+                                      C   1.700
+                                      H   1.200
+    VDW scale factors:                1.60  1.80  2.00
+    VDW point density:                3.000
+    ESP method:                       pw6b95
+    ESP basis set:                    aug-cc-pV(D+d)Z
+
+Grid information (see 1_default_grid.dat in Angstrom)
+    Number of grid points:            1265
+
+Quantum electrostatic potential (see 1_default_grid_esp.dat)
+
+Grid information (see 2_default_grid.dat in Angstrom)
+    Number of grid points:            1238
+
+Quantum electrostatic potential (see 2_default_grid_esp.dat)
+
+Grid information (see 3_default_grid.dat in Angstrom)
+    Number of grid points:            1285
+
+Quantum electrostatic potential (see 3_default_grid_esp.dat)
+
+Grid information (see 4_default_grid.dat in Angstrom)
+    Number of grid points:            1270
+
+Quantum electrostatic potential (see 4_default_grid_esp.dat)
+
+Grid information (see 5_default_grid.dat in Angstrom)
+    Number of grid points:            1256
+
+Quantum electrostatic potential (see 5_default_grid_esp.dat)
+
+Constraints
+
+Restraint
+    Hyperbolic restraint to a charge of zero
+    Hydrogen atoms are not restrained
+    resp_a:                           0.0005
+    resp_b:                           0.1000
+
+Fit
+
+Electrostatic Potential Charges
+   Center  Symbol       ESP      RESP
+      1    C      -0.00578863 -0.00343001
+      2    C      -0.00091043 -0.00138403
+      3    H       0.00140573  0.00078559
+      4    H       0.00154521  0.00092402
+      5    H       0.00164545  0.00102442
+      6    H       0.00089201  0.00088465
+      7    H       0.00046771  0.00045968
+      8    H       0.00074294  0.00073567
+Total Charge:      0.00000000  0.00000000
+----------------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------------
+PCM RESP
+Log from stage:
+----------------------------------------------------------------------------------------------------
+Electrostatic potential parameters
+
+Grid information (see 1_default_grid.dat in Angstrom)
+    Number of grid points:            1265
+
+Quantum electrostatic potential (see 1_default_grid_esp.dat)
+
+Grid information (see 2_default_grid.dat in Angstrom)
+    Number of grid points:            1238
+
+Quantum electrostatic potential (see 2_default_grid_esp.dat)
+
+Grid information (see 3_default_grid.dat in Angstrom)
+    Number of grid points:            1285
+
+Quantum electrostatic potential (see 3_default_grid_esp.dat)
+
+Grid information (see 4_default_grid.dat in Angstrom)
+    Number of grid points:            1270
+
+Quantum electrostatic potential (see 4_default_grid_esp.dat)
+
+Grid information (see 5_default_grid.dat in Angstrom)
+    Number of grid points:            1256
+
+Quantum electrostatic potential (see 5_default_grid_esp.dat)
+
+Constraints
+    Equality constraints
+        Equal charges on atoms
+                                  1   2
+                                  3   4   5   6   7   8
+
+Restraint
+    Hyperbolic restraint to a charge of zero
+    Hydrogen atoms are not restrained
+    resp_a:                           0.0010
+    resp_b:                           0.1000
+
+Fit
+
+Electrostatic Potential Charges
+   Center  Symbol       ESP      RESP
+      1    C      -0.00334507 -0.00187722
+      2    C      -0.00334507 -0.00187722
+      3    H       0.00111502  0.00062574
+      4    H       0.00111502  0.00062574
+      5    H       0.00111502  0.00062574
+      6    H       0.00111502  0.00062574
+      7    H       0.00111502  0.00062574
+      8    H       0.00111502  0.00062574
+Total Charge:     -0.00000000  0.00000000
+----------------------------------------------------------------------------------------------------
+
+
+
+Full precision charges have been saved to 'results/charges_pcm_full.out'.
+Rounded charges (3 decimals) have been saved to 'results/charges_pcm_rounded.out'.
+Rounded charges in 'results/charges_pcm_rounded.out' violate the specified equality constraints and
+need to be corrected by hand.
+END

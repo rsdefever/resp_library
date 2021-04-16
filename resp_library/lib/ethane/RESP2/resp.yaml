@@ -1,0 +1,21 @@
+name:   ethane
+smiles: CC
+
+conformer_generation:
+  n_conformers: 5
+  rms_threshold: 0.5
+  energy_threshold: 10  # kJ/mol
+  random_seed: 1
+
+resp:
+  type: RESP2
+  point_density: 3.0
+  vdw_scale_factors:
+    - 1.6
+    - 1.8
+    - 2.0
+  charge_constraints:
+  equality_constraints:
+    - [1, 2]
+    - [3, 4, 5, 6, 7, 8]
+
