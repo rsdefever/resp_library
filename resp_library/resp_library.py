@@ -358,7 +358,7 @@ def _geometry_optimize(molecule, resp_type):
     if resp_type == "RESP1":
         psi4.set_options({
             "basis": "6-31g*",
-            "geom_maxiter": 500,
+            "geom_maxiter": 1000,
             "maxiter": 500,
             "opt_coordinates": "cartesian",
         })
@@ -369,21 +369,21 @@ def _geometry_optimize(molecule, resp_type):
     elif resp_type == "RESP2":
         psi4.set_options({
             "basis": "6-31g*",
-            "geom_maxiter": 500,
+            "geom_maxiter": 1000,
             "maxiter": 500,
             "opt_coordinates": "cartesian",
         })
         psi4.optimize("hf", molecule=molecule)
         psi4.set_options({
             "basis": "cc-pV(D+d)Z",
-            "geom_maxiter": 500,
+            "geom_maxiter": 1000,
             "maxiter": 500,
             "opt_coordinates": "cartesian",
         })
         psi4.optimize("hf", molecule=molecule)
         psi4.set_options({
             "basis": "cc-pV(D+d)Z",
-            "geom_maxiter": 200,
+            "geom_maxiter": 1000,
             "maxiter": 200,
             "dft_spherical_points": 590,
             "dft_radial_points": 99,
