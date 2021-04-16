@@ -1,9 +1,9 @@
 numpy
-scipy
+scipy >=1.6
 psi4
 resp
 pyyaml
 ele
-rdkit
+rdkit <2021.03
 requests
 git-lfs
