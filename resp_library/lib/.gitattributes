@@ -1,0 +1,2 @@
+psi4.log filter=lfs diff=lfs merge=lfs -text
+*_grid.dat filter=lfs diff=lfs merge=lfs -text
