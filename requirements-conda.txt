@@ -1,0 +1,9 @@
+numpy
+scipy
+psi4
+resp
+pyyaml
+ele
+rdkit
+requests
+git-lfs

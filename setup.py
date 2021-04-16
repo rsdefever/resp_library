@@ -8,7 +8,7 @@ __version__ = "0.0.0"
 
 # Add README to PyPI
 this_dir = Path(__file__).parent
-with open(Path.joinpath(this_dir, "README.md"), encoding="utf-8") as f:
+with open(Path.joinpath(this_dir, "README.rst"), encoding="utf-8") as f:
     long_description = f.read()
 
 
@@ -25,6 +25,5 @@ setup(
     include_package_data=True,
     description="Store and retrieve RESP/RESP2 partial charges for small molecules",
     long_description=long_description,
-    #long_description_content_type="text/x-rst",
-    long_description_content_type="text/x-md",
+    long_description_content_type="text/x-rst",
 )

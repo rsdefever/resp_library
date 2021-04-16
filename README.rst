@@ -84,12 +84,12 @@ Therefore, that section of the yaml file would be edited to become:
     - [7, 8]  # H, H
 
 The file ``resp_library/lib/{molecule_name}/template.pdb`` is generated
-by ``prepare_charge_calculation`` in order to provide the atom ordering.
-The atom numbering in the YAML file is 1-indexed. The only line of the
+by ``prepare_charge_calculation`` to provide the atom ordering.
+The atom numbering in the YAML file is 1-indexed. The other line of the
 YAML file that may need to be edited is the number of conformers
 to be generated; if the molecule has less than 5 atoms you should reduce
-this number to two. ``rdkit`` will not be able to generate enough
-sufficiently distinct conformers.
+this number from ``5`` to ``2``. ``rdkit`` will not be able to generate enough
+distinct conformers for very small molecules.
 
 After updating the YAML files you may run the charge calculations.
 Depending on the size of the molecule this may take some time.
@@ -100,7 +100,7 @@ Depending on the size of the molecule this may take some time.
     resp_library.calculate_charges("CCO", "RESP1")
     resp_library.calculate_charges("CCO", "RESP2")
 
-Unless you see any errors, the charge calculation has been
+Unless you see errors, it is likely that the charge calculation was
 successful. The charges can be found under
 ``resp_library/lib/{molecule_name}/RESP1/results`` and
 ``resp_library/lib/{molecule_name}/RESP2/results``. The RESP2
@@ -118,9 +118,11 @@ to a branch. For example:
 RESP charges are only reliable to ~0.01q. Therefore, we provided
 rounded charges in the ``results`` folder. However, sometimes,
 during the charge rounding, the symmetry specified in the YAML
-file is broken. Please check and fix any broken symmetry manually.
-These changes should be added as a second commit to clearly
-document the manual modifications.
+file is broken. Please check and fix any broken symmetry manually
+while preserving the net charge of the molecule. These changes
+should be added as a second commit to clearly document the
+manual modifications.
+
 
 Installation
 ~~~~~~~~~~~~
@@ -128,8 +130,9 @@ Installation
 Currently, installation from source is the only option.
 We recommend creating a conda environment to manage the
 depenedencies. Some dependencies are only available via ``pip``.
-Note that it is important to do an editable installation if
-you plan on adding to the RESP library.
+Note that it is important to do an editable installation
+from your fork of the repository if you plan on adding
+to the RESP library.
 
 .. code-block:: bash
 
@@ -143,7 +146,7 @@ you plan on adding to the RESP library.
 Credits
 ~~~~~~~
 
-Development of Ele was supported by the National Science Foundation
+Development of **RESP Library** was supported by the National Science Foundation
 under grant NSF Grant Number 1835874. Any opinions, findings, and conclusions or
 recommendations expressed in this material are those of the author(s) and do
 not necessarily reflect the views of the National Science Foundation.
