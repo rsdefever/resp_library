@@ -68,9 +68,10 @@ for symmetric groups and that the charges of polar centers and
 attached hydrogens be fixed for the second round of the RESP calculation.
 These two sections of the YAML file are used to specify these
 constraints. For example, in the case of ethanol, the oxygen
-and hydrogen bonded to oxygen would be fixed, the 3 hydrogens bound
-to the first aliphatic carbon should have the same charge, and the
-two hydrogens bound to the second carbon should have the same charge.
+and hydrogen bonded to oxygen would be constrained in the second-stage
+fitting, the 3 hydrogens bound to the first aliphatic carbon are
+constrained to have the same charge, and the two hydrogens bound to
+the middle carbon are constrained to have the same charge.
 Therefore, that section of the yaml file would be edited to become:
 
 .. code-block:: bash
